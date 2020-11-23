@@ -297,7 +297,7 @@ My function \texttt{optical\_flow} uses iterative refinement to deal with the la
 Please check my code in \nb, under `Q4 HOG'. Here is a summary of all my functions, including helpers
 \begin{itemize}
 	\item \texttt{crop\_center} is a function that a borrowed, and adapted from  \url{https://stackoverflow.com/questions/39382412/crop-center-portion-of-a-numpy-image}, it crops the input image, and only preserves the centre portion of the image. 
-	\item \texttt{get\_gradient\_magnitude\_hist} gets the gradients in both $x, y$ directions, gradient magnitudes using $L_2$ norm, directions of the gradients, and the required $m \times n \times 6$ histogram tensor. It has a default $\tau = 8$, which you can customize. 
+	\item \texttt{get\_gradient\_magnitude\_hist} gets the gradients in both $x, y$ directions, gradient magnitudes using $L_2$ norm, directions of the gradients, and two $m \times n \times 6$ histogram tensor. The first tensor returned, \texttt{hist\_gradient} is a $m \times n \times 6$ tensor with cumulative gradient strength in each bin. The second tensor returned is \texttt{hist\_count}, which is also sized $m \times n \times 6$, but based on the count of gradients falling into each bin. It has a default $\tau = 8$ and small gradient strength snap to zero threshold of \texttt{mag\_thres=1e2}, both of which you can customize. 
 	\item \texttt{quiver\_plot} is a convenient helper function that plots the $m \times n \times 6$ histogram tensor over an image. Do make sure that the $\tau$ used in this function is the same as the one passed into \texttt{get\_gradient\_magnitude\_hist}. You also have an option to save the resulting figure if you pass in an save file name path. 
 	\item \texttt{normalize(hist\_val, eps=.001)} is a helper that computes local normalizations, as specified in step 4 of this question. The normalization is 
 		\begin{equation}
@@ -305,21 +305,24 @@ Please check my code in \nb, under `Q4 HOG'. Here is a summary of all my functio
 		\end{equation}
 	\item \texttt{get\_normalized\_hist} computes the normalized histogram, which has shape $(m - 1) \times (n - 1) \times (2 \times 2 \times 6) = (m - 1) \times (n - 1) \times 24$. It also saves the entire $(m - 1) \times (n - 1) \times 24$ array as a one line, \textbf{comma delimitated}, text file, if the save file name is specified. It saves the array as one line via reshaping the array into size \texttt{(1, -1)}, and then \texttt{np.savetxt}. 
 \end{itemize}
-Figures \ref{fig:1hog}, \ref{fig:2hog}, and \ref{fig:3hog} are visualizations of the histogram array on the three given images. I thresholded the extreneously large values inside the histogram array to make the plots look nicer. (before this thresholding, there are some extremely long vectors shown, and they ruined the aesthetics of the plot. ) 
+Figures \ref{fig:1hog}, \ref{fig:2hog}, and \ref{fig:3hog} are visualizations of the histogram array on the three given images. (I included visualizations both via cumulative gradient strength and count of gradients falling into each bin.) For the Figures with gradient strength, I thresholded the extraneously large values inside the histogram array to make the plots look nicer. (before this thresholding, there are some extremely long vectors shown, and they ruined the aesthetics of the plot. ) 
 \newline \newline
-\noindent {\Large \textbf{You can find my \texttt{txt} files under the \texttt{Q4} folder. They are such that \texttt{1.jpg -> 1.txt}, \texttt{2.jpg -> 2.txt}, and \texttt{3.jpg -> 3.txt}. }}
+\noindent {\Large \textbf{You can find my \texttt{txt} files under the \texttt{Q4} folder. They are such that \texttt{1.jpg -> 1.txt}, \texttt{2.jpg -> 2.txt}, and \texttt{3.jpg -> 3.txt}. These are based on the cumulative gradient strength array of size $m \times n \times 6$. }}
 
 \begin{figure}
-	\center\includegraphics[width=0.8\textwidth]{figs/quiver_1}
-	\caption{\label{fig:1hog} HOG visualization over image 1.jpg}
+	\center\includegraphics[width=0.49\textwidth]{figs/quiver_1}
+	\includegraphics[width=0.49\textwidth]{figs/quiver_1_count}
+	\caption{\label{fig:1hog} HOG visualization over image 1.jpg. The left uses Gradient Magnitude (thresholded again to make it look nice) to produce the quiver plot, while the one on the right uses gradient count. }
 \end{figure}
 \begin{figure}
-	\center\includegraphics[width=0.8\textwidth]{figs/quiver_2}
-	\caption{\label{fig:2hog} HOG visualization over image 2.jpg}
+	\center\includegraphics[width=0.49\textwidth]{figs/quiver_2}
+	\includegraphics[width=0.49\textwidth]{figs/quiver_2_count}
+	\caption{\label{fig:2hog} HOG visualization over image 2.jpg. The left uses Gradient Magnitude (thresholded again to make it look nice) to produce the quiver plot, while the one on the right uses gradient count. }
 \end{figure}
 \begin{figure}
-	\center\includegraphics[width=0.8\textwidth]{figs/quiver_3}
-	\caption{\label{fig:3hog} HOG visualization over image 3.jpg}
+	\center\includegraphics[width=0.49\textwidth]{figs/quiver_3}
+	\includegraphics[width=0.49\textwidth]{figs/quiver_3_count}
+	\caption{\label{fig:3hog} HOG visualization over image 3.jpg. The left uses Gradient Magnitude (thresholded again to make it look nice) to produce the quiver plot, while the one on the right uses gradient count. }
 \end{figure}
 
 
