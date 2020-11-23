@@ -1,0 +1,327 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[
+    pdftex, 
+    dvipsnames
+]{xcolor}
+\PassOptionsToPackage{hyphens}{url}\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=Thistle
+]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{datetime}
+\usepackage{xargs}
+\usepackage{ccicons}
+\usepackage{mdframed}
+\usepackage{caption}
+\usepackage{cancel}
+\usepackage[nottoc]{tocbibind}
+\usepackage[
+    outputdir=.texpadtmp
+]{minted}
+\usepackage{graphicx, caption, subcaption}
+
+% ==== License =====
+\usepackage[
+    type={CC}, 
+    modifier={by-nc-sa}, 
+    version={4.0},
+]{doclicense}
+
+% ==== todo notes ====
+\usepackage[
+    colorinlistoftodos,
+    prependcaption,
+    textsize=tiny
+]{todonotes}
+\newcommandx{\note}[2][1=]{\todo[linecolor=Thistle,backgroundcolor=Thistle!25,bordercolor=Thistle,#1]{#2}}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+
+% General
+\newcommand{\mc}[1]{\mathcal{#1}}
+
+% Math Bold Font, Vector Notations
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\be}{\mathbf{e}}
+\renewcommand{\bf}{\mathbf{f}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bi}{\mathbf{i}}
+\newcommand{\bj}{\mathbf{j}}
+\newcommand{\bk}{\mathbf{k}}
+\newcommand{\bl}{\mathbf{l}}
+\newcommand{\bm}{\mathbf{m}}
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bo}{\mathbf{o}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bt}{\mathbf{t}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\nb}[0]{\texttt{a3-code.ipynb}}
+
+% Proofs, Structures
+\newcommand{\proof}{\tit{\underline{Proof:}}} % This equivalent to the \begin{proof}\end{proof} block
+\newcommand{\proofforward}{\tit{\underline{Proof($\implies$):}}}
+\newcommand{\proofback}{\tit{\underline{Proof($\impliedby$):}}}
+\newcommand{\proofsuperset}{\tit{\underline{Proof($\supseteq$):}}}
+\newcommand{\proofsubset}{\tit{\underline{Proof($\subseteq$):}}}
+\newcommand{\contradiction}{$\longrightarrow\!\longleftarrow$}
+\newcommand{\qed}{\hfill $\blacksquare$}
+
+% Number Spaces, Vector Space
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\field}{\mathbb{F}}
+
+% customized commands
+\newcommand{\settag}[1]{\renewcommand{\theenumi}{#1}}
+\newcommand{\tbf}[1]{\textbf{#1}}
+\newcommand{\tit}[1]{\textit{#1}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\newcommand{\double}[1]{\mathbb{#1}} % Set to behave like that on word
+\newcommand{\trans}[3]{$#1:#2\rightarrow{}#3$}
+\newcommand{\map}[3]{\text{$\left[#1\right]_{#2}^{#3}$}}
+\newcommand{\dime}[1]{\mathrm{dim}(#1)}
+\newcommand{\mat}[2]{M_{#1 \times #2}(\R)}
+\newcommand{\aug}{\fboxsep=-\fboxrule\!\!\!\fbox{\strut}\!\!\!}
+\newcommand{\basecase}{\textsc{\underline{Basis Case:}} }
+\newcommand{\inductive}{\textsc{\underline{Inductive Step:}} }
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\independent}{\perp \!\!\! \perp}
+
+% Set section number in front of equation enumerations
+\counterwithin{equation}{section}
+\counterwithin{footnote}{section}
+\author{Tingfeng Xia (1003780884)}
+\title{\textsc{CS420 Assignment} \# 3}
+\date{\today}
+
+\begin{document}
+\maketitle
+%\doclicenseThis
+\tableofcontents
+\section{Notes and Disclosure}
+\begin{itemize}
+	\item I used a cropping algorithm \texttt{crop\_center(image, expected\_size)} borrowed from \url{https://stackoverflow.com/questions/39382412/crop-center-portion-of-a-numpy-image}. The original algorithm presented in the post was for 2D array images with one colour channel. I adapted it so it now supports 3D tensor images, with three colour channels. 
+	\item I also used the \texttt{tqdm} library for visualization of the progress of for loops. It was not required.
+	\item I also printed my code, which is \nb, into a pdf file, so that you can view the code without running a Jupyter server. It is available inside \texttt{Assignment3.zip} as \texttt{a3-code.pdf}. 
+\end{itemize}
+\section{Question 1: Theory}
+\subsection{Scale Maximizer}
+The Laplacian of Gaussian operator is defined as
+\begin{equation}
+	\nabla^{2} G(x, y, \sigma)=\frac{\partial^{2} G(x, y, \sigma)}{\partial x^{2}}+\frac{\partial^{2} G(x, y, \sigma)}{\partial y^{2}}=\frac{1}{\pi \sigma^{4}}\left(\frac{x^{2}+y^{2}}{2 \sigma^{2}}-1\right) e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
+\end{equation}
+where 
+\begin{equation}
+	G(x, y, \sigma)=\frac{1}{2 \pi \sigma^{2}} e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
+\end{equation}
+Now we want to find the $\sigma$ that maximizes the response, i.e. the characteristic scale for black filled circle of diameter $D$ on white background. Clearly it would only happen when the LoG filter and the circle are centrally aligned, and I shall now evaluate the response, as a function of both $D$ and $\sigma$. (also changing to polar coordinates)
+\begin{align}
+	f(\sigma, D) 
+	&= \int_{-\infty}^\infty\int_{-\infty}^\infty \sigma^2 \Delta G(x, y, \sigma) \mathbb{I}(x^2 + y^2 \leq (D/2)^2) \mathrm d x\mathrm d y  \\
+	&=  \sigma^2 \int_0^{2\pi} \int_{0}^{D/2} \frac{1}{\pi \sigma^{4}}\left(\frac{r^2}{2 \sigma^{2}}-1\right) e^{-\frac{r^2}{2 \sigma^{2}}} \cdot r \, \mathrm d r \mathrm d \theta \\
+	&= \frac{\sigma^2}{\sigma^6} \left[ \int_{0}^{D / 2} r^{3} e^{-\frac{r^{2}}{2 \sigma^{2}}} \mathrm d r-2 \sigma^{2} \int_{0}^{D / 2} r e^{-\frac{r^{2}}{2 \sigma^{2}}} \mathrm d r \right]
+\end{align}
+We have
+\begin{equation}
+	% https://www.wolframalpha.com/input/?i=integrate+r%5E3+e%5E%28-r%5E2+%2F+%282%CF%83%5E2+%29%29+dr+from+0+to+D%2F2
+	\int_{0}^{\frac{D}{2}} r^{3} e^{-r^{2} /\left(2 \sigma^{2}\right)} d r=2 \sigma^{4}-\frac{1}{4} \sigma^{2} e^{-D^{2} /\left(8 \sigma^{2}\right)}\left(D^{2}+8 \sigma^{2}\right)
+\end{equation}
+and 
+\begin{equation}
+	% https://www.wolframalpha.com/input/?i=integrate+r+e%5E%28-r%5E2+%2F+%282+%CF%83%5E2%29%29+dr+from+0+to+D%2F2 
+	\int_{0}^{\frac{D}{2}} r e^{-r^{2} /\left(2 \sigma^{2}\right)} d r=\sigma^{2}\left(1-e^{-D^{2} /\left(8 \sigma^{2}\right)}\right)
+\end{equation}
+Then, 
+\begin{align}
+	f(\sigma, D) 
+	&= \frac{\sigma^2}{\sigma^6} \left[2 \sigma^{4}-\frac{1}{4} \sigma^{2} e^{-D^{2} /\left(8 \sigma^{2}\right)}\left(D^{2}+8 \sigma^{2}\right) - 2\sigma^2 \sigma^{2}\left(1-e^{-D^{2} /\left(8 \sigma^{2}\right)}\right)  \right] \\
+	% https://www.wolframalpha.com/input/?i=2x%5E4+-+0.25+x%5E2+e%5E%28-D%5E2+%2F+%288+x%5E2%29%29+%28D%5E2+%2B+8x%5E2%29+-+%282+x%5E4+%281+-+e%5E%28-D%5E2+%2F+%288+x%5E2%29%29%29%29 
+	&= \frac{\sigma^2}{\sigma^6} \left[ -\frac{1}{4}D^2\sigma^2e^{-D^2 / (8\sigma^2)} \right] \\
+	&= \frac{D^2 e^{-D^2 / (8\sigma^2)}}{-4 \sigma^2}
+\end{align}
+To find the characteristic scale, it suffices to find 
+\begin{equation}
+	\hat{\sigma} \quad \text{such that}\quad \left.\frac{\partial f(\sigma, D)}{\partial \sigma}\right|_{\sigma = \hat{\sigma}} = 0
+\end{equation}
+We have
+\begin{align}
+	\frac{\partial f(\sigma, D)}{\partial \sigma} 
+	&= \frac{\partial}{\partial \sigma}  \left( \frac{D^2 e^{-D^2 / (8\sigma^2)}}{-4 \sigma^2} \right) \\
+	% https://www.wolframalpha.com/input/?i=d%2Fdx+%28%28-D%5E2+e%5E%28-D%5E2%2F%288x%5E2%29%29%29+%2F+%284x%5E2%29%29
+	&= - \frac{D^{2} e^{-D^{2} /\left(8 \sigma^{2}\right)}\left(D^{2}-8 \sigma^{2}\right)}{16 \sigma^{5}} 
+\end{align}
+Since $D^2 > 0 \wedge e^{-D / (8 \sigma^2)} > 0$, we know that
+\begin{equation}
+	\frac{\partial f(\sigma, D)}{\partial \sigma} \implies D^2 - 8\sigma^2 = 0 \implies \hat{\sigma} = \sqrt{\frac{D^2}{8}} = D\cdot \sqrt{1/8}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{White On Black Scenario}
+In this case, there will be no change in the scale that we should to detect the white circle on black background. However, we do need to look for minimum instead of maximum in this case. 
+\subsection{Experiment}
+\begin{figure}[H]
+	\center\includegraphics[width=0.85\textwidth]{figs/laplacian_of_gaussian_square_experiment}
+	\caption{\label{fig:laplacian of gaussian square experiment}Relationship between response maximizer ($\sigma$ used in the Laplacian of Gaussian) and the size of the square.}
+\end{figure}
+Figure \ref{fig:laplacian of gaussian square experiment} shows the relationship between the sigma used in the Laplacian of Gaussian to attain the max response for each size of square. The relationship is clearly linear, and we can reasonably guess for a square of $s \times s$, the response is maximized with
+\begin{equation}
+	\hat{\sigma} = 2.5s
+\end{equation}
+
+\section{Question 2: Random Sample Consensus}
+\subsection{Part 1.}
+You can find my implementation in file \nb, under the section `Q2) RANSAC'. There is a flag \texttt{dynamic = True} that sets the behaviour of the RANSAC code. Set this flag to \texttt{False} for the fixed number of iteration version. (which is what is required in Part 1.) In the RANSAC implementation, we assume that $p = .5, k = 3$ and $P = .995$. From there, we can calculate number of iteration required, which is
+\begin{equation}
+	S = \log ( 1 - P ) / \log ( 1 - p ^ k) 
+\end{equation}
+Figure \ref{fig:affine homography compare} shows the comparison between the affine transformation estimation with RANSAC, and homography with RANSAC that we saw in the tutorial code. Clearly affine estimation will not be as good as homography, since it can only produce parallelograms. However, as we can see in Figure \ref{fig:affine homography compare}, it is not too bad. (it gives an ok estimation.) Figure \ref{fig:affine homography matrix compare} compares the $2 \times 3$ affine matrix with the $3 \times 3$ homography matrix. As we can see, the top two rows of the homography matrix is roughly equal to the affine matrix. This means that the affine matrix is at least somewhat good. 
+\begin{figure}[H]
+	\center\includegraphics[width=\textwidth]{figs/affine_homography_compare}
+	\caption{\label{fig:affine homography compare} Comparison between Affine transformation estimation with RANSAC and Homography with RANSAC. }
+\end{figure}
+\begin{figure}[H]
+	\center\includegraphics[width=\textwidth]{figs/compare_affine_homography_matrix}
+	\caption{\label{fig:affine homography matrix compare} Comparison between Affine transformation estimation with RANSAC and Homography with RANSAC. }
+\end{figure}
+
+\subsection{Part 2.}
+In this part, we update the RANSAC code to dynamically update the number of iterations. We will set $p$ initially to .5, and during the loop, if we encounter estimated affine matrix $M$ such that it has 
+\begin{equation}
+	\text{inlier} / \text{total} > p
+\end{equation}
+then we set $p = \text{inlier} / \text{total}$, and re-estimate
+\begin{equation}
+	S = \log ( 1 - P ) / \log ( 1 - p ^ k) 
+\end{equation}
+Then, the number of loop left to do is
+\begin{equation}
+	S - \text{\# iteration done already}
+\end{equation}
+In my code in \nb, under `Q2) RANSAC', set the flag \texttt{dynamic} to \texttt{True} to enable dynamic update of the number if iteration. We notice that the number of iteration done is almost always 40, which is the same as the case where we don't perform dynamic update. This means that the $p = .5$ initial estimation is too confident. If we play around with the initial value, and set it to for example to $p = 0.3$, then we will need 400 iterations if we don't have dynamic update. But with dynamic update, we need only about 100 to 150 iterations to complete. This is a drastic decrease in number of iteration and thus an huge increase in performance. In general, in cases where $p$ is underestimated, dynamic update could be very beneficial. 
+
+\section{Question 3: Optical Flow}
+Please check my function \texttt{optical\_flow} in file \nb, under `Q3) Optical Flow'. Since the function is quite huge, I shall provide a function signature and variable description. They are as follows:
+\begin{mdframed}
+	\begin{minted}{python}
+def optical_flow(
+    image_list, block_size=9, comp_frame1=0, comp_frame2=1, 
+    gaussian_size=7, gaussian_sig=5, time_sigma=1, norm_threshold=.4,
+    max_refine_limit = 30
+):
+    """
+    Performs Optical Flow motion estiation with iterative refinement
+    
+    image_list:       list of numpy arrays, each numpy array is an image of size 
+                        H x W. assumeing floating point (32bits) accuracy, and gray
+    block_size:       window sized used in the summation, default is 9
+    comp_frame1:      frame1 index inside the image_list, default is 0
+    comp_frame2:      frame2 index inside the image_list, default is 1
+    gaussian_size:    size of the gaussian used to blur the image prior to Sobel, 
+                        default is 7, meaning 7 x 7 gaussian filter
+    gaussian_sig:     stddev of the gaussian used to blur the image prior to Sobel,
+                        default is 5
+    time_sigma:       stddev of the 1d gaussian used to blur the stack of frames 
+                        along time axis, default is 1
+    norm_threshold:   norm of motion vector threshold, eliminating small motions
+                        so that the plots can be qualitatively better. default
+                        is 0.4
+    max_refine_limit: max number of iterative refinement, default 30
+    """
+	\end{minted}
+\end{mdframed}
+\begin{figure}[H]
+	\center
+	\begin{subfigure}[b]{0.49\textwidth}
+		\caption{frame 07 $\rightarrow$ frame 08 in Basketball}
+		\includegraphics[width=\textwidth]{figs/basketball0708}
+		
+	\end{subfigure}
+	\begin{subfigure}[b]{0.49\textwidth}
+		\caption{frame 08 $\rightarrow$ frame 09 in Basketball}
+		\includegraphics[width=\textwidth]{figs/basketball0809}
+		
+	\end{subfigure}
+	\begin{subfigure}[b]{0.49\textwidth}
+		\caption{frame 09 $\rightarrow$ frame 10 in Basketball}
+		\includegraphics[width=\textwidth]{figs/basketball0910}
+		
+	\end{subfigure}
+	\begin{subfigure}[b]{0.49\textwidth}
+		\caption{frame 07 $\rightarrow$ frame 08 in Backyard}
+		\includegraphics[width=\textwidth]{figs/backyard0708}
+		
+	\end{subfigure}
+	\caption{\label{fig: optical flow samples} Optical Flow Visualization Samples (with iterative refinement)}
+\end{figure}
+My function \texttt{optical\_flow} uses iterative refinement to deal with the large motions, for example the one seen in the upward movement of the ball in the Backyard series of frames. I believe presenting all the motion predictions for all the frames presented is not necessary, but I will present some of the frames. Figure \ref{fig: optical flow samples} provides some samples of outputs that we get from the optical flow algorithm, plotted as quiver plot over respective frame image. (Note that the frame numbers used are marked as captions for each subfigure.) 
+
+\paragraph{Images (a), (b), and (c)} are for the Basketball series of frames. We can see that the man on the left is throwing the ball, and the ball has a motion towards upper-right. The man on the right is trying to catch the ball, and his head is moving towards right while his hip is moving towards left. We can confirm, from the quiver plots (a), (b) and (c), that the motion detected via out algorithm reflects these motion. 
+
+\paragraph{Sample (d)} is from 07 frame to 08 frame in the Backyard series. The two girls hugging together have a motion jumping up, and this is reflected by the overwhelmingly many upward arrow drawn over them. The orange ball presented in the image is moving upward, and we can see several upward arrows shown over the ball. Also, the boy in the back is walking towards left has arrows toward left all over his body. (You might have too zoom in to see this, but you have my guarantee that there is.) Moreover, the girl on the right is moving towards right, coherent with all the right-pointing arrows over her. 
+
+\paragraph{In general,} as suggested in the question, optical flow might also detect motions in homogeneous regions, and the motion vectors within them are largely incoherent. This could happen in occasions such as walls in (a) (b) (c) in Figure \ref{fig: optical flow samples}, or such as ground / lawn in (d) in Figure \ref{fig: optical flow samples}. The are many causes for this, for example the ones in the Basketball example might have been caused by change in illumination (shadow) due to the movement of the man on the left. However, these motions are generally small, so we can threshold our result to get a qualitatively better plot. 
+
+\section{Question 4: Local Descriptor: Histogram of Oriented Gradients}
+Please check my code in \nb, under `Q4 HOG'. Here is a summary of all my functions, including helpers
+\begin{itemize}
+	\item \texttt{crop\_center} is a function that a borrowed, and adapted from  \url{https://stackoverflow.com/questions/39382412/crop-center-portion-of-a-numpy-image}, it crops the input image, and only preserves the centre portion of the image. 
+	\item \texttt{get\_gradient\_magnitude\_hist} gets the gradients in both $x, y$ directions, gradient magnitudes using $L_2$ norm, directions of the gradients, and the required $m \times n \times 6$ histogram tensor. It has a default $\tau = 8$, which you can customize. 
+	\item \texttt{quiver\_plot} is a convenient helper function that plots the $m \times n \times 6$ histogram tensor over an image. Do make sure that the $\tau$ used in this function is the same as the one passed into \texttt{get\_gradient\_magnitude\_hist}. You also have an option to save the resulting figure if you pass in an save file name path. 
+	\item \texttt{normalize(hist\_val, eps=.001)} is a helper that computes local normalizations, as specified in step 4 of this question. The normalization is 
+		\begin{equation}
+			\hat{h}_{i}=\frac{h_{i}}{\sqrt{\sum_{i} h_{i}^{2}+e^{2}}}
+		\end{equation}
+	\item \texttt{get\_normalized\_hist} computes the normalized histogram, which has shape $(m - 1) \times (n - 1) \times (2 \times 2 \times 6) = (m - 1) \times (n - 1) \times 24$. It also saves the entire $(m - 1) \times (n - 1) \times 24$ array as a one line, \textbf{comma delimitated}, text file, if the save file name is specified. It saves the array as one line via reshaping the array into size \texttt{(1, -1)}, and then \texttt{np.savetxt}. 
+\end{itemize}
+Figures \ref{fig:1hog}, \ref{fig:2hog}, and \ref{fig:3hog} are visualizations of the histogram array on the three given images. I thresholded the extreneously large values inside the histogram array to make the plots look nicer. (before this thresholding, there are some extremely long vectors shown, and they ruined the aesthetics of the plot. ) 
+\newline \newline
+\noindent {\Large \textbf{You can find my \texttt{txt} files under the \texttt{Q4} folder. They are such that \texttt{1.jpg -> 1.txt}, \texttt{2.jpg -> 2.txt}, and \texttt{3.jpg -> 3.txt}. }}
+
+\begin{figure}
+	\center\includegraphics[width=0.8\textwidth]{figs/quiver_1}
+	\caption{\label{fig:1hog} HOG visualization over image 1.jpg}
+\end{figure}
+\begin{figure}
+	\center\includegraphics[width=0.8\textwidth]{figs/quiver_2}
+	\caption{\label{fig:2hog} HOG visualization over image 2.jpg}
+\end{figure}
+\begin{figure}
+	\center\includegraphics[width=0.8\textwidth]{figs/quiver_3}
+	\caption{\label{fig:3hog} HOG visualization over image 3.jpg}
+\end{figure}
+
+
+
+\end{document}
